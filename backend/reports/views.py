@@ -1,216 +1,168 @@
-from django.http import HttpResponse
+from django.db.models import Avg, Sum
 
 from rest_framework.views import APIView
+
+from rest_framework.response import Response
 
 from rest_framework.permissions import IsAuthenticated
 
 
-from reportlab.pdfgen import canvas
-
-
 from .models import (
-    ReportCard,
-    SchoolProfile
+    ReportCard
+)
+
+
+from .serializers import (
+    ReportCardSerializer
+)
+
+
+from accounts.permissions import (
+    IsAdmin,
+    IsTeacher,
+    IsStudent
 )
 
 
 
-from accounts.permissions import IsStudent
+
+
+# ==========================
+# ADMIN VIEW ALL REPORT
+# ==========================
+
+class AdminReportView(APIView):
+
+    permission_classes = [
+        IsAdmin
+    ]
+
+
+    def get(self, request):
+
+        reports = ReportCard.objects.all()
+
+
+        serializer = ReportCardSerializer(
+            reports,
+            many=True
+        )
+
+
+        return Response(
+            serializer.data
+        )
 
 
 
 
 
-class DownloadReportCardPDF(APIView):
+# ==========================
+# TEACHER CREATE REPORT
+# ==========================
 
-    permission_classes=[
+class TeacherReportView(APIView):
+
+    permission_classes = [
+        IsTeacher
+    ]
+
+
+    def get(self, request):
+
+        reports = ReportCard.objects.all()
+
+
+        serializer = ReportCardSerializer(
+            reports,
+            many=True
+        )
+
+
+        return Response(
+            serializer.data
+        )
+
+
+
+    def post(self, request):
+
+        serializer = ReportCardSerializer(
+            data=request.data
+        )
+
+
+        if serializer.is_valid():
+
+            report = serializer.save()
+
+
+            self.calculate_rank()
+
+
+            return Response(
+                ReportCardSerializer(report).data,
+                status=201
+            )
+
+
+        return Response(
+            serializer.errors,
+            status=400
+        )
+
+
+
+    def calculate_rank(self):
+
+        reports = ReportCard.objects.all().order_by(
+            "-average"
+        )
+
+
+        rank = 1
+
+
+        for report in reports:
+
+            report.rank = rank
+
+            report.save(
+                update_fields=[
+                    "rank"
+                ]
+            )
+
+            rank += 1
+
+
+
+
+
+# ==========================
+# STUDENT VIEW OWN REPORT
+# ==========================
+
+class StudentReportView(APIView):
+
+    permission_classes = [
         IsStudent
     ]
 
 
-    def get(self,request,report_id):
+    def get(self, request):
 
-        report = ReportCard.objects.get(
-            id=report_id,
+        reports = ReportCard.objects.filter(
             student=request.user
         )
 
 
-        school = SchoolProfile.objects.first()
-
-
-
-        response = HttpResponse(
-            content_type="application/pdf"
+        serializer = ReportCardSerializer(
+            reports,
+            many=True
         )
 
 
-        response[
-            "Content-Disposition"
-        ] = (
-            'attachment; filename="report_card.pdf"'
+        return Response(
+            serializer.data
         )
-
-
-
-        pdf = canvas.Canvas(
-            response
-        )
-
-
-
-        y = 800
-
-
-
-        if school:
-
-            pdf.setFont(
-                "Helvetica-Bold",
-                18
-            )
-
-            pdf.drawCentredString(
-                300,
-                y,
-                school.name
-            )
-
-            y -=40
-
-
-
-        pdf.setFont(
-            "Helvetica",
-            12
-        )
-
-
-        pdf.drawString(
-            50,
-            y,
-            "OFFICIAL REPORT CARD"
-        )
-
-
-        y -=40
-
-
-
-        pdf.drawString(
-            50,
-            y,
-            "Student: "
-            + report.student.username
-        )
-
-
-        y -=30
-
-
-
-        pdf.drawString(
-            50,
-            y,
-            "Total Mark: "
-            + str(report.total_mark)
-        )
-
-
-        y -=30
-
-
-
-        pdf.drawString(
-            50,
-            y,
-            "Average: "
-            + str(report.average)
-        )
-
-
-        y -=30
-
-
-
-        pdf.drawString(
-            50,
-            y,
-            "Rank: "
-            + str(report.rank)
-        )
-
-
-        y -=30
-
-
-
-        pdf.drawString(
-            50,
-            y,
-            "Grade: "
-            + report.grade
-        )
-
-
-        y -=30
-
-
-
-        pdf.drawString(
-            50,
-            y,
-            "Status: "
-            + report.status
-        )
-
-
-        y -=40
-
-
-
-        pdf.drawString(
-            50,
-            y,
-            "Teacher Comment:"
-        )
-
-
-        y -=20
-
-
-        pdf.drawString(
-            70,
-            y,
-            report.teacher_comment
-        )
-
-
-
-        y -=40
-
-
-
-        pdf.drawString(
-            50,
-            y,
-            "Principal Comment:"
-        )
-
-
-        y -=20
-
-
-        pdf.drawString(
-            70,
-            y,
-            report.principal_comment
-        )
-
-
-
-        pdf.save()
-
-
-
-        return response
