@@ -37,7 +37,7 @@ class Exam(models.Model):
     teacher = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="created_exams"
+        related_name="exams_created"
     )
 
 
@@ -69,6 +69,7 @@ class Exam(models.Model):
 
 
     def __str__(self):
+
         return self.title
 
 
@@ -134,7 +135,50 @@ class Question(models.Model):
 
 
     def __str__(self):
+
         return self.question_text
+
+
+
+
+
+class ExamAttempt(models.Model):
+
+    student = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+
+    exam = models.ForeignKey(
+        Exam,
+        on_delete=models.CASCADE
+    )
+
+
+    started_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+
+    submitted = models.BooleanField(
+        default=False
+    )
+
+
+    submitted_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+
+    def __str__(self):
+
+        return (
+            self.student.username
+            + "-"
+            + self.exam.title
+        )
 
 
 
@@ -144,6 +188,12 @@ class StudentAnswer(models.Model):
 
     student = models.ForeignKey(
         User,
+        on_delete=models.CASCADE
+    )
+
+
+    exam = models.ForeignKey(
+        Exam,
         on_delete=models.CASCADE
     )
 
@@ -175,6 +225,7 @@ class StudentAnswer(models.Model):
 
 
     def __str__(self):
+
         return self.student.username
 
 
@@ -252,4 +303,5 @@ class ExamResult(models.Model):
 
 
     def __str__(self):
+
         return self.student.username
