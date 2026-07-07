@@ -6,7 +6,7 @@ from school.models import ClassRoom
 
 
 
-class Student(models.Model):
+class StudentProfile(models.Model):
 
     user = models.OneToOneField(
         User,
@@ -22,27 +22,36 @@ class Student(models.Model):
 
     classroom = models.ForeignKey(
         ClassRoom,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE
+    )
+
+
+    photo = models.ImageField(
+        upload_to="students/",
+        blank=True,
         null=True
     )
 
 
     parent_name = models.CharField(
-        max_length=100,
-        blank=True
+        max_length=200
     )
 
 
     parent_phone = models.CharField(
-        max_length=30,
+        max_length=50
+    )
+
+
+    address = models.TextField(
         blank=True
     )
 
 
-    date_of_birth = models.DateField(
-        null=True,
-        blank=True
+    created_at = models.DateTimeField(
+        auto_now_add=True
     )
+
 
 
     def __str__(self):
