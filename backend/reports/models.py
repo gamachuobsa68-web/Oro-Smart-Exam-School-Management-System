@@ -6,6 +6,38 @@ from school.models import AcademicYear
 
 
 
+class SchoolProfile(models.Model):
+
+    name = models.CharField(
+        max_length=200
+    )
+
+    logo = models.ImageField(
+        upload_to="school_logo/",
+        blank=True,
+        null=True
+    )
+
+    address = models.CharField(
+        max_length=300,
+        blank=True
+    )
+
+
+    phone = models.CharField(
+        max_length=50,
+        blank=True
+    )
+
+
+    def __str__(self):
+
+        return self.name
+
+
+
+
+
 class ReportCard(models.Model):
 
     student = models.ForeignKey(
@@ -62,32 +94,35 @@ class ReportCard(models.Model):
     )
 
 
-    def save(self, *args, **kwargs):
+
+    def save(self,*args,**kwargs):
 
         if self.average >= 80:
-            self.grade = "A"
+            self.grade="A"
 
-        elif self.average >= 70:
-            self.grade = "B"
+        elif self.average >=70:
+            self.grade="B"
 
-        elif self.average >= 60:
-            self.grade = "C"
+        elif self.average >=60:
+            self.grade="C"
 
-        elif self.average >= 50:
-            self.grade = "D"
-
-        else:
-            self.grade = "F"
-
-
-        if self.average >= 50:
-            self.status = "PASS"
+        elif self.average >=50:
+            self.grade="D"
 
         else:
-            self.status = "FAIL"
+            self.grade="F"
 
 
-        super().save(*args, **kwargs)
+
+        if self.average >=50:
+            self.status="PASS"
+
+        else:
+            self.status="FAIL"
+
+
+
+        super().save(*args,**kwargs)
 
 
 
