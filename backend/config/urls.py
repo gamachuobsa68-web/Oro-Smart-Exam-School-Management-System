@@ -1,9 +1,6 @@
 from django.contrib import admin
 
-from django.urls import (
-    path,
-    include
-)
+from django.urls import path, include
 
 
 from rest_framework_simplejwt.views import (
@@ -15,60 +12,45 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
 
-
-    # Django Admin
     path(
         "admin/",
         admin.site.urls
     ),
 
 
-
-    # JWT Login
     path(
         "api/token/",
-        TokenObtainPairView.as_view(),
-        name="token_obtain_pair"
+        TokenObtainPairView.as_view()
     ),
 
 
-
-    # JWT Refresh Token
     path(
         "api/token/refresh/",
-        TokenRefreshView.as_view(),
-        name="token_refresh"
+        TokenRefreshView.as_view()
     ),
 
 
-
-    # User Accounts
     path(
         "api/accounts/",
-        include(
-            "accounts.urls"
-        )
+        include("accounts.urls")
     ),
 
 
-
-    # Exam System
     path(
         "api/exams/",
-        include(
-            "exams.urls"
-        )
+        include("exams.urls")
     ),
 
 
-
-    # Report Card System
     path(
         "api/reports/",
-        include(
-            "reports.urls"
-        )
+        include("reports.urls")
     ),
 
+
+    path(
+        "api/students/",
+        include("students.urls")
+    ),
 
 ]
