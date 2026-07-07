@@ -89,6 +89,12 @@ urlpatterns = [
             "professional.urls"
         )
     ),
+    path(
+    "api/dashboard/",
+    include(
+        "dashboard.urls"
+    )
+),
 
 
 ]
