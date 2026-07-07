@@ -1,22 +1,19 @@
 from django.contrib.auth.models import AbstractUser
-
 from django.db import models
 
 
 
 class User(AbstractUser):
 
-
     ROLE_CHOICES = (
 
-        ("ADMIN","Admin"),
+        ("ADMIN", "Admin"),
 
-        ("TEACHER","Teacher"),
+        ("TEACHER", "Teacher"),
 
-        ("STUDENT","Student"),
+        ("STUDENT", "Student"),
 
     )
-
 
 
     role = models.CharField(
@@ -29,6 +26,14 @@ class User(AbstractUser):
 
     )
 
+
+    phone = models.CharField(
+
+        max_length=50,
+
+        blank=True
+
+    )
 
 
     def __str__(self):
