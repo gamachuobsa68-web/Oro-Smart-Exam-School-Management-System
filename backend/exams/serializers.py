@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .models import (
     Exam,
     Question,
+    ExamAttempt,
     StudentAnswer,
     ExamResult
 )
@@ -15,7 +16,18 @@ class QuestionSerializer(serializers.ModelSerializer):
 
         model = Question
 
-        fields = "__all__"
+        fields = [
+            "id",
+            "exam",
+            "question_text",
+            "question_type",
+            "mark",
+            "option_a",
+            "option_b",
+            "option_c",
+            "option_d",
+            "correct_answer",
+        ]
 
 
 
@@ -33,7 +45,38 @@ class ExamSerializer(serializers.ModelSerializer):
 
         model = Exam
 
-        fields = "__all__"
+        fields = [
+            "id",
+            "title",
+            "subject",
+            "classroom",
+            "teacher",
+            "exam_type",
+            "duration_minutes",
+            "total_mark",
+            "is_published",
+            "created_at",
+            "questions",
+        ]
+
+
+
+
+
+class ExamAttemptSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = ExamAttempt
+
+        fields = [
+            "id",
+            "student",
+            "exam",
+            "started_at",
+            "submitted",
+            "submitted_at",
+        ]
 
 
 
@@ -45,7 +88,16 @@ class StudentAnswerSerializer(serializers.ModelSerializer):
 
         model = StudentAnswer
 
-        fields = "__all__"
+        fields = [
+            "id",
+            "student",
+            "exam",
+            "question",
+            "answer",
+            "is_correct",
+            "mark_obtained",
+            "created_at",
+        ]
 
 
 
@@ -57,4 +109,13 @@ class ExamResultSerializer(serializers.ModelSerializer):
 
         model = ExamResult
 
-        fields = "__all__"
+        fields = [
+            "id",
+            "student",
+            "exam",
+            "total_mark",
+            "percentage",
+            "grade",
+            "status",
+            "submitted_at",
+        ]
