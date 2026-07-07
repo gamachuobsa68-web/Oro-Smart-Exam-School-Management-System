@@ -2,7 +2,9 @@ from rest_framework import serializers
 
 from .models import (
     Exam,
-    Question
+    Question,
+    StudentAnswer,
+    ExamResult
 )
 
 
@@ -18,6 +20,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 
 
+
 class ExamSerializer(serializers.ModelSerializer):
 
     questions = QuestionSerializer(
@@ -29,5 +32,29 @@ class ExamSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Exam
+
+        fields = "__all__"
+
+
+
+
+
+class StudentAnswerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = StudentAnswer
+
+        fields = "__all__"
+
+
+
+
+
+class ExamResultSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = ExamResult
 
         fields = "__all__"
