@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "cpd",
     "school",
     "professional",
+    "dashboard",
 ]
 
 
