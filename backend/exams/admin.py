@@ -3,9 +3,11 @@ from django.contrib import admin
 from .models import (
     Exam,
     Question,
+    ExamAttempt,
     StudentAnswer,
     ExamResult
 )
+
 
 
 @admin.register(Exam)
@@ -16,15 +18,24 @@ class ExamAdmin(admin.ModelAdmin):
         "subject",
         "classroom",
         "teacher",
+        "exam_type",
         "duration_minutes",
-        "is_published"
+        "is_published",
     )
 
+
     list_filter = (
+        "exam_type",
         "subject",
         "classroom",
-        "is_published"
+        "is_published",
     )
+
+
+    search_fields = (
+        "title",
+    )
+
 
 
 
@@ -34,7 +45,31 @@ class QuestionAdmin(admin.ModelAdmin):
     list_display = (
         "exam",
         "question_type",
-        "mark"
+        "mark",
+    )
+
+
+    list_filter = (
+        "question_type",
+        "exam",
+    )
+
+
+
+@admin.register(ExamAttempt)
+class ExamAttemptAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "student",
+        "exam",
+        "started_at",
+        "submitted",
+        "submitted_at",
+    )
+
+
+    list_filter = (
+        "submitted",
     )
 
 
@@ -44,9 +79,15 @@ class StudentAnswerAdmin(admin.ModelAdmin):
 
     list_display = (
         "student",
+        "exam",
         "question",
         "is_correct",
-        "mark_obtained"
+        "mark_obtained",
+    )
+
+
+    list_filter = (
+        "is_correct",
     )
 
 
@@ -60,10 +101,11 @@ class ExamResultAdmin(admin.ModelAdmin):
         "total_mark",
         "percentage",
         "grade",
-        "status"
+        "status",
     )
 
+
     list_filter = (
+        "grade",
         "status",
-        "grade"
     )
