@@ -13,6 +13,8 @@ class IsAdmin(BasePermission):
 
 
 
+
+
 class IsTeacher(BasePermission):
 
     def has_permission(self, request, view):
@@ -21,6 +23,8 @@ class IsTeacher(BasePermission):
             request.user.is_authenticated
             and request.user.role == "TEACHER"
         )
+
+
 
 
 
