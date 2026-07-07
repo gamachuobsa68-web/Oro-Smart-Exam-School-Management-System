@@ -2,12 +2,14 @@ from django.urls import path
 
 from .views import (
     TeacherExamView,
-    StudentExamView
+    StudentExamView,
+    SubmitExamView
 )
 
 
 
 urlpatterns = [
+
 
     path(
         "teacher/",
@@ -18,6 +20,12 @@ urlpatterns = [
     path(
         "student/",
         StudentExamView.as_view()
+    ),
+
+
+    path(
+        "submit/",
+        SubmitExamView.as_view()
     ),
 
 ]
