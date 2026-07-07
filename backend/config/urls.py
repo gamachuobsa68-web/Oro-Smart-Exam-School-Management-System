@@ -8,7 +8,6 @@ from rest_framework_simplejwt.views import (
 )
 
 
-
 urlpatterns = [
 
     path(
@@ -34,4 +33,11 @@ urlpatterns = [
         include("accounts.urls")
     ),
 
+
+    path(
+        "api/exams/",
+        include("exams.urls")
+    ),
+
 ]
+
