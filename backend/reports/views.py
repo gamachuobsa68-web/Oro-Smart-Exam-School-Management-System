@@ -1,134 +1,216 @@
-from rest_framework.views import APIView
+from django.http import HttpResponse
 
-from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from rest_framework.permissions import IsAuthenticated
 
 
-from .models import ReportCard
-
-from .serializers import ReportCardSerializer
+from reportlab.pdfgen import canvas
 
 
-from accounts.permissions import (
-    IsAdmin,
-    IsTeacher,
-    IsStudent
+from .models import (
+    ReportCard,
+    SchoolProfile
 )
 
 
 
-# ==========================
-# ADMIN VIEW ALL REPORTS
-# ==========================
-
-class AdminReportView(APIView):
-
-    permission_classes = [
-        IsAdmin
-    ]
-
-
-    def get(self, request):
-
-        reports = ReportCard.objects.all()
-
-
-        serializer = ReportCardSerializer(
-            reports,
-            many=True
-        )
-
-
-        return Response(
-            serializer.data
-        )
+from accounts.permissions import IsStudent
 
 
 
 
 
-# ==========================
-# TEACHER CREATE REPORT
-# ==========================
+class DownloadReportCardPDF(APIView):
 
-class TeacherReportView(APIView):
-
-    permission_classes = [
-        IsTeacher
-    ]
-
-
-    def get(self, request):
-
-        reports = ReportCard.objects.all()
-
-
-        serializer = ReportCardSerializer(
-            reports,
-            many=True
-        )
-
-
-        return Response(
-            serializer.data
-        )
-
-
-
-    def post(self, request):
-
-        serializer = ReportCardSerializer(
-            data=request.data
-        )
-
-
-        if serializer.is_valid():
-
-            serializer.save()
-
-
-            return Response(
-                serializer.data,
-                status=201
-            )
-
-
-        return Response(
-            serializer.errors,
-            status=400
-        )
-
-
-
-
-
-# ==========================
-# STUDENT VIEW OWN REPORT
-# ==========================
-
-class StudentReportView(APIView):
-
-    permission_classes = [
+    permission_classes=[
         IsStudent
     ]
 
 
-    def get(self, request):
+    def get(self,request,report_id):
 
-        reports = ReportCard.objects.filter(
-
+        report = ReportCard.objects.get(
+            id=report_id,
             student=request.user
-
         )
 
 
-        serializer = ReportCardSerializer(
-            reports,
-            many=True
+        school = SchoolProfile.objects.first()
+
+
+
+        response = HttpResponse(
+            content_type="application/pdf"
         )
 
 
-        return Response(
-            serializer.data
+        response[
+            "Content-Disposition"
+        ] = (
+            'attachment; filename="report_card.pdf"'
         )
+
+
+
+        pdf = canvas.Canvas(
+            response
+        )
+
+
+
+        y = 800
+
+
+
+        if school:
+
+            pdf.setFont(
+                "Helvetica-Bold",
+                18
+            )
+
+            pdf.drawCentredString(
+                300,
+                y,
+                school.name
+            )
+
+            y -=40
+
+
+
+        pdf.setFont(
+            "Helvetica",
+            12
+        )
+
+
+        pdf.drawString(
+            50,
+            y,
+            "OFFICIAL REPORT CARD"
+        )
+
+
+        y -=40
+
+
+
+        pdf.drawString(
+            50,
+            y,
+            "Student: "
+            + report.student.username
+        )
+
+
+        y -=30
+
+
+
+        pdf.drawString(
+            50,
+            y,
+            "Total Mark: "
+            + str(report.total_mark)
+        )
+
+
+        y -=30
+
+
+
+        pdf.drawString(
+            50,
+            y,
+            "Average: "
+            + str(report.average)
+        )
+
+
+        y -=30
+
+
+
+        pdf.drawString(
+            50,
+            y,
+            "Rank: "
+            + str(report.rank)
+        )
+
+
+        y -=30
+
+
+
+        pdf.drawString(
+            50,
+            y,
+            "Grade: "
+            + report.grade
+        )
+
+
+        y -=30
+
+
+
+        pdf.drawString(
+            50,
+            y,
+            "Status: "
+            + report.status
+        )
+
+
+        y -=40
+
+
+
+        pdf.drawString(
+            50,
+            y,
+            "Teacher Comment:"
+        )
+
+
+        y -=20
+
+
+        pdf.drawString(
+            70,
+            y,
+            report.teacher_comment
+        )
+
+
+
+        y -=40
+
+
+
+        pdf.drawString(
+            50,
+            y,
+            "Principal Comment:"
+        )
+
+
+        y -=20
+
+
+        pdf.drawString(
+            70,
+            y,
+            report.principal_comment
+        )
+
+
+
+        pdf.save()
+
+
+
+        return response
