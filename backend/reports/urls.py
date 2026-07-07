@@ -1,46 +1,21 @@
 from django.urls import path
 
-
 from .views import (
-
-    AdminReportView,
-
-    TeacherReportView,
-
-    StudentReportView
-
+    DownloadReportCardPDF
 )
 
 
 
-urlpatterns = [
+urlpatterns=[
 
 
     path(
 
-        "admin/",
+        "download/<int:report_id>/",
 
-        AdminReportView.as_view()
+        DownloadReportCardPDF.as_view(),
 
-    ),
-
-
-
-    path(
-
-        "teacher/",
-
-        TeacherReportView.as_view()
-
-    ),
-
-
-
-    path(
-
-        "student/",
-
-        StudentReportView.as_view()
+        name="download-report"
 
     ),
 
