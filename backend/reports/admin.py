@@ -1,6 +1,15 @@
 from django.contrib import admin
 
-from .models import ReportCard
+from .models import (
+    ReportCard,
+    SchoolProfile
+)
+
+
+
+admin.site.register(
+    SchoolProfile
+)
 
 
 
@@ -13,8 +22,6 @@ class ReportCardAdmin(admin.ModelAdmin):
 
         "academic_year",
 
-        "total_mark",
-
         "average",
 
         "rank",
@@ -22,14 +29,5 @@ class ReportCardAdmin(admin.ModelAdmin):
         "grade",
 
         "status"
-
-    )
-
-
-    list_filter = (
-
-        "grade",
-
-        "status",
 
     )
