@@ -1,13 +1,14 @@
 from rest_framework.views import APIView
-
 from rest_framework.response import Response
-
 from rest_framework.permissions import IsAuthenticated
+
+from django.utils import timezone
 
 
 from .models import (
     Exam,
     Question,
+    ExamAttempt,
     StudentAnswer,
     ExamResult
 )
@@ -15,6 +16,7 @@ from .models import (
 
 from .serializers import (
     ExamSerializer,
+    ExamAttemptSerializer,
     ExamResultSerializer
 )
 
@@ -26,7 +28,9 @@ from accounts.permissions import (
 
 
 
-
+# =========================
+# TEACHER CREATE / VIEW EXAM
+# =========================
 
 class TeacherExamView(APIView):
 
@@ -41,10 +45,12 @@ class TeacherExamView(APIView):
             teacher=request.user
         )
 
+
         serializer = ExamSerializer(
             exams,
             many=True
         )
+
 
         return Response(
             serializer.data
@@ -65,6 +71,7 @@ class TeacherExamView(APIView):
                 teacher=request.user
             )
 
+
             return Response(
                 serializer.data,
                 status=201
@@ -80,7 +87,9 @@ class TeacherExamView(APIView):
 
 
 
-
+# =========================
+# STUDENT VIEW PUBLISHED EXAM
+# =========================
 
 class StudentExamView(APIView):
 
@@ -110,14 +119,15 @@ class StudentExamView(APIView):
 
 
 
+# =========================
+# START EXAM TIMER
+# =========================
 
-
-class SubmitExamView(APIView):
+class StartExamView(APIView):
 
     permission_classes = [
         IsStudent
     ]
-
 
 
     def post(self, request):
@@ -127,14 +137,152 @@ class SubmitExamView(APIView):
         )
 
 
-        answers = request.data.get(
-            "answers",
-            []
+        exam = Exam.objects.get(
+            id=exam_id
+        )
+
+
+        already_started = ExamAttempt.objects.filter(
+            student=request.user,
+            exam=exam
+        ).exists()
+
+
+        if already_started:
+
+            return Response(
+                {
+                    "message":
+                    "Exam already started"
+                },
+                status=400
+            )
+
+
+
+        attempt = ExamAttempt.objects.create(
+
+            student=request.user,
+
+            exam=exam
+
+        )
+
+
+        return Response(
+
+            {
+                "attempt":
+                ExamAttemptSerializer(attempt).data,
+
+                "duration_minutes":
+                exam.duration_minutes
+
+            }
+
+        )
+
+
+
+
+
+# =========================
+# SAVE ANSWER BUTTON
+# =========================
+
+class SaveAnswerView(APIView):
+
+    permission_classes = [
+        IsStudent
+    ]
+
+
+    def post(self, request):
+
+        question_id = request.data.get(
+            "question_id"
+        )
+
+
+        exam_id = request.data.get(
+            "exam_id"
+        )
+
+
+        answer = request.data.get(
+            "answer"
+        )
+
+
+        question = Question.objects.get(
+            id=question_id
         )
 
 
         exam = Exam.objects.get(
             id=exam_id
+        )
+
+
+        StudentAnswer.objects.update_or_create(
+
+            student=request.user,
+
+            exam=exam,
+
+            question=question,
+
+            defaults={
+
+                "answer": answer
+
+            }
+
+        )
+
+
+        return Response(
+
+            {
+                "message":
+                "Answer saved"
+            }
+
+        )
+
+
+
+
+
+# =========================
+# SUBMIT EXAM + AUTO MARK
+# =========================
+
+class SubmitExamView(APIView):
+
+    permission_classes = [
+        IsStudent
+    ]
+
+
+    def post(self, request):
+
+        exam_id = request.data.get(
+            "exam_id"
+        )
+
+
+        exam = Exam.objects.get(
+            id=exam_id
+        )
+
+
+        answers = StudentAnswer.objects.filter(
+
+            student=request.user,
+
+            exam=exam
+
         )
 
 
@@ -145,44 +293,27 @@ class SubmitExamView(APIView):
         for item in answers:
 
 
-            question = Question.objects.get(
-                id=item["question"]
-            )
+            if item.answer == item.question.correct_answer:
 
 
-            answer = item["answer"]
+                item.is_correct = True
+
+                item.mark_obtained = (
+                    item.question.mark
+                )
+
+                total += item.question.mark
 
 
-            correct = (
-                answer ==
-                question.correct_answer
-            )
+            else:
 
+                item.is_correct = False
 
-            mark = 0
-
-
-            if correct:
-
-                mark = question.mark
-
-                total += mark
+                item.mark_obtained = 0
 
 
 
-            StudentAnswer.objects.create(
-
-                student=request.user,
-
-                question=question,
-
-                answer=answer,
-
-                is_correct=correct,
-
-                mark_obtained=mark
-
-            )
+            item.save()
 
 
 
@@ -206,6 +337,29 @@ class SubmitExamView(APIView):
         )
 
 
+
+        attempt = ExamAttempt.objects.filter(
+
+            student=request.user,
+
+            exam=exam
+
+        ).first()
+
+
+
+        if attempt:
+
+            attempt.submitted = True
+
+            attempt.submitted_at = timezone.now()
+
+            attempt.save()
+
+
+
         return Response(
+
             ExamResultSerializer(result).data
-            )
+
+                )
