@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     "teachers",
     "exams",
     "reports",
-    "cpd",
     "school",
     "professional",
     "dashboard",
