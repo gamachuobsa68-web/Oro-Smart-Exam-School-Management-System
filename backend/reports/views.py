@@ -1,168 +1,105 @@
-from django.db.models import Avg, Sum
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
 
-from rest_framework.views import APIView
-
-from rest_framework.response import Response
-
-from rest_framework.permissions import IsAuthenticated
-
-
-from .models import (
-    ReportCard
-)
+from students.models import Student
 
 
-from .serializers import (
-    ReportCardSerializer
-)
+def DownloadReportCardPDF(request, student_id):
+    student = get_object_or_404(Student, id=student_id)
+
+    response = HttpResponse(
+        content_type="application/pdf"
+    )
+
+    response[
+        "Content-Disposition"
+    ] = f'attachment; filename="report_card_{student_id}.pdf"'
+
+    pdf = canvas.Canvas(response, pagesize=A4)
+
+    width, height = A4
+
+    # Header
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawCentredString(
+        width / 2,
+        height - 80,
+        "Oro Smart Exam School"
+    )
+
+    pdf.setFont("Helvetica-Bold", 14)
+    pdf.drawCentredString(
+        width / 2,
+        height - 120,
+        "Student Report Card"
+    )
+
+    # Student information
+    pdf.setFont("Helvetica", 12)
+
+    y = height - 180
+
+    pdf.drawString(
+        80,
+        y,
+        f"Student ID: {student.id}"
+    )
+
+    pdf.drawString(
+        80,
+        y - 30,
+        f"Student Name: {student}"
+    )
+
+    pdf.drawString(
+        80,
+        y - 60,
+        "Class: __________________"
+    )
+
+    pdf.drawString(
+        80,
+        y - 90,
+        "Academic Year: __________"
+    )
 
 
-from accounts.permissions import (
-    IsAdmin,
-    IsTeacher,
-    IsStudent
-)
+    # Table header
+    y = y - 150
+
+    pdf.setFont("Helvetica-Bold", 12)
+
+    pdf.drawString(80, y, "Subject")
+    pdf.drawString(250, y, "Mark")
+    pdf.drawString(350, y, "Grade")
 
 
+    pdf.setFont("Helvetica", 12)
 
-
-
-# ==========================
-# ADMIN VIEW ALL REPORT
-# ==========================
-
-class AdminReportView(APIView):
-
-    permission_classes = [
-        IsAdmin
+    subjects = [
+        ("Mathematics", ""),
+        ("English", ""),
+        ("Science", ""),
     ]
 
+    y -= 30
 
-    def get(self, request):
-
-        reports = ReportCard.objects.all()
-
-
-        serializer = ReportCardSerializer(
-            reports,
-            many=True
-        )
+    for subject, mark in subjects:
+        pdf.drawString(80, y, subject)
+        pdf.drawString(250, y, mark)
+        pdf.drawString(350, y, "")
+        y -= 25
 
 
-        return Response(
-            serializer.data
-        )
+    pdf.drawString(
+        80,
+        y - 30,
+        "Generated successfully."
+    )
 
+    pdf.showPage()
+    pdf.save()
 
-
-
-
-# ==========================
-# TEACHER CREATE REPORT
-# ==========================
-
-class TeacherReportView(APIView):
-
-    permission_classes = [
-        IsTeacher
-    ]
-
-
-    def get(self, request):
-
-        reports = ReportCard.objects.all()
-
-
-        serializer = ReportCardSerializer(
-            reports,
-            many=True
-        )
-
-
-        return Response(
-            serializer.data
-        )
-
-
-
-    def post(self, request):
-
-        serializer = ReportCardSerializer(
-            data=request.data
-        )
-
-
-        if serializer.is_valid():
-
-            report = serializer.save()
-
-
-            self.calculate_rank()
-
-
-            return Response(
-                ReportCardSerializer(report).data,
-                status=201
-            )
-
-
-        return Response(
-            serializer.errors,
-            status=400
-        )
-
-
-
-    def calculate_rank(self):
-
-        reports = ReportCard.objects.all().order_by(
-            "-average"
-        )
-
-
-        rank = 1
-
-
-        for report in reports:
-
-            report.rank = rank
-
-            report.save(
-                update_fields=[
-                    "rank"
-                ]
-            )
-
-            rank += 1
-
-
-
-
-
-# ==========================
-# STUDENT VIEW OWN REPORT
-# ==========================
-
-class StudentReportView(APIView):
-
-    permission_classes = [
-        IsStudent
-    ]
-
-
-    def get(self, request):
-
-        reports = ReportCard.objects.filter(
-            student=request.user
-        )
-
-
-        serializer = ReportCardSerializer(
-            reports,
-            many=True
-        )
-
-
-        return Response(
-            serializer.data
-        )
+    return response
