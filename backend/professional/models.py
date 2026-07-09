@@ -9,33 +9,51 @@ from school.models import (
 
 
 
+
+
 class TeacherAssistant(models.Model):
 
+
     teacher = models.OneToOneField(
+
         User,
-        on_delete=models.CASCADE
+
+        on_delete=models.CASCADE,
+
+        related_name="teacher_assistant"
+
     )
 
 
     qualification = models.CharField(
+
         max_length=200
+
     )
 
 
     specialization = models.CharField(
+
         max_length=200
+
     )
 
 
     phone = models.CharField(
+
         max_length=50,
+
         blank=True
+
     )
 
 
     created_at = models.DateTimeField(
+
         auto_now_add=True
+
     )
+
 
 
     def __str__(self):
@@ -46,28 +64,44 @@ class TeacherAssistant(models.Model):
 
 
 
+
+
 class LessonPlan(models.Model):
 
+
     teacher = models.ForeignKey(
+
         User,
-        on_delete=models.CASCADE
+
+        on_delete=models.CASCADE,
+
+        related_name="lesson_plans"
+
     )
 
 
     subject = models.ForeignKey(
+
         Subject,
+
         on_delete=models.CASCADE
+
     )
 
 
     classroom = models.ForeignKey(
+
         ClassRoom,
+
         on_delete=models.CASCADE
+
     )
 
 
     topic = models.CharField(
+
         max_length=200
+
     )
 
 
@@ -86,6 +120,13 @@ class LessonPlan(models.Model):
     date = models.DateField()
 
 
+    created_at = models.DateTimeField(
+
+        auto_now_add=True
+
+    )
+
+
 
     def __str__(self):
 
@@ -95,16 +136,35 @@ class LessonPlan(models.Model):
 
 
 
+
+
 class CPD(models.Model):
 
+
+    STATUS = (
+
+        ("Pending", "Pending"),
+
+        ("Completed", "Completed"),
+
+    )
+
+
     teacher = models.ForeignKey(
+
         User,
-        on_delete=models.CASCADE
+
+        on_delete=models.CASCADE,
+
+        related_name="cpds"
+
     )
 
 
     title = models.CharField(
+
         max_length=200
+
     )
 
 
@@ -112,24 +172,36 @@ class CPD(models.Model):
 
 
     month = models.CharField(
+
         max_length=50
+
     )
 
 
     hours = models.IntegerField(
+
         default=0
+
     )
 
 
     status = models.CharField(
+
         max_length=50,
+
+        choices=STATUS,
+
         default="Pending"
+
     )
 
 
     created_at = models.DateTimeField(
+
         auto_now_add=True
+
     )
+
 
 
     def __str__(self):
@@ -140,37 +212,66 @@ class CPD(models.Model):
 
 
 
+
+
 class CPDReport(models.Model):
 
+
     teacher = models.ForeignKey(
+
         User,
+
         on_delete=models.CASCADE
+
     )
 
 
     month = models.CharField(
+
         max_length=50
+
     )
 
 
     completed_cpd = models.IntegerField(
+
         default=0
+
     )
 
 
     total_hours = models.IntegerField(
+
         default=0
+
     )
 
 
     comment = models.TextField(
+
         blank=True
+
     )
 
 
     created_at = models.DateTimeField(
+
         auto_now_add=True
+
     )
+
+
+
+    class Meta:
+
+        unique_together = (
+
+            "teacher",
+
+            "month"
+
+        )
+
 
 
     def __str__(self):
