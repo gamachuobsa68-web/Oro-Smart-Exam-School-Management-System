@@ -1,7 +1,5 @@
 from rest_framework.views import APIView
-
 from rest_framework.response import Response
-
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -13,18 +11,19 @@ import openpyxl
 
 from .models import StudentProfile
 
-
 from .serializers import StudentSerializer
 
 
 from accounts.permissions import (
     IsAdmin,
-    IsTeacher
+    IsTeacher,
+    IsStudent
 )
 
 
 
 User = get_user_model()
+
 
 
 
@@ -35,9 +34,13 @@ User = get_user_model()
 
 class StudentListCreateView(APIView):
 
+
     permission_classes = [
+
         IsAdmin
+
     ]
+
 
 
     def get(self, request):
@@ -46,21 +49,30 @@ class StudentListCreateView(APIView):
 
 
         serializer = StudentSerializer(
+
             students,
+
             many=True
+
         )
 
 
         return Response(
+
             serializer.data
+
         )
+
+
 
 
 
     def post(self, request):
 
         serializer = StudentSerializer(
+
             data=request.data
+
         )
 
 
@@ -70,15 +82,83 @@ class StudentListCreateView(APIView):
 
 
             return Response(
+
                 serializer.data,
+
                 status=201
+
             )
 
 
         return Response(
+
             serializer.errors,
+
             status=400
+
         )
+
+
+
+
+
+
+
+# ==========================
+# MY STUDENT PROFILE
+# ==========================
+
+class StudentProfileView(APIView):
+
+
+    permission_classes = [
+
+        IsStudent
+
+    ]
+
+
+
+    def get(self, request):
+
+        try:
+
+            student = StudentProfile.objects.get(
+
+                user=request.user
+
+            )
+
+
+            serializer = StudentSerializer(
+
+                student
+
+            )
+
+
+            return Response(
+
+                serializer.data
+
+            )
+
+
+        except StudentProfile.DoesNotExist:
+
+
+            return Response(
+
+                {
+                    "message":
+                    "Student profile not found"
+                },
+
+                status=404
+
+            )
+
+
 
 
 
@@ -90,9 +170,13 @@ class StudentListCreateView(APIView):
 
 class ClassRosterView(APIView):
 
+
     permission_classes = [
+
         IsTeacher
+
     ]
+
 
 
     def get(self, request, classroom_id):
@@ -124,26 +208,35 @@ class ClassRosterView(APIView):
 
 
 
+
+
 # ==========================
 # EXCEL IMPORT
 # ==========================
 
 class StudentExcelImportView(APIView):
 
+
     permission_classes = [
+
         IsAdmin
+
     ]
 
 
 
     def post(self, request):
 
+
         excel_file = request.FILES.get(
+
             "file"
+
         )
 
 
         if not excel_file:
+
 
             return Response(
 
@@ -159,7 +252,9 @@ class StudentExcelImportView(APIView):
 
 
         workbook = openpyxl.load_workbook(
+
             excel_file
+
         )
 
 
@@ -172,9 +267,13 @@ class StudentExcelImportView(APIView):
 
 
         for row in sheet.iter_rows(
+
             min_row=2,
+
             values_only=True
+
         ):
+
 
 
             username = row[0]
@@ -189,11 +288,23 @@ class StudentExcelImportView(APIView):
 
 
 
+            if User.objects.filter(
+
+                username=username
+
+            ).exists():
+
+                continue
+
+
+
             user = User.objects.create_user(
 
                 username=username,
 
-                password="student123"
+                password="student123",
+
+                role="STUDENT"
 
             )
 
@@ -214,7 +325,6 @@ class StudentExcelImportView(APIView):
             )
 
 
-
             created += 1
 
 
@@ -222,11 +332,15 @@ class StudentExcelImportView(APIView):
         return Response(
 
             {
+
                 "message":
-                "Students imported",
+
+                "Students imported successfully",
 
                 "total":
+
                 created
+
             }
 
-          )
+        )
