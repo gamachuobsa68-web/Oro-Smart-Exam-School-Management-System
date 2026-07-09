@@ -1,40 +1,64 @@
 <LoginScreen>:
 
     BoxLayout:
+
         orientation: "vertical"
+
         padding: 30
+
         spacing: 20
 
 
         Label:
+
             text: "Oro Smart Exam"
+
             font_size: 28
-            size_hint_y: 0.3
+
+            size_hint_y: 0.2
+
 
 
         TextInput:
+
             id: username
+
             hint_text: "Username"
+
             multiline: False
+
 
 
         TextInput:
+
             id: password
+
             hint_text: "Password"
+
             password: True
+
             multiline: False
+
 
 
         Button:
+
             text: "LOGIN"
+
             size_hint_y: 0.2
+
             on_press: root.login_user()
 
 
+
         Label:
+
             id: message
+
             text: ""
+
             color: 1,0,0,1
+
 
 
 
@@ -42,34 +66,151 @@
 
 <HomeScreen>:
 
+
     BoxLayout:
+
         orientation: "vertical"
+
         padding: 20
+
         spacing: 15
 
 
+
         Label:
+
             text: "Student Dashboard"
+
             font_size: 26
+
             size_hint_y: 0.2
+
 
 
         ScrollView:
 
+
             Label:
+
                 id: exam_list
-                text: "Loading exams..."
+
+                text: "Loading Exams..."
+
                 size_hint_y: None
+
                 height: self.texture_size[1]
 
 
+
+        TextInput:
+
+            id: exam_id
+
+            hint_text: "Enter Exam ID"
+
+            multiline: False
+
+
+
         Button:
-            text: "Refresh Exams"
+
+            text: "Start Exam"
+
             size_hint_y: 0.2
-            on_press: root.on_pre_enter()
+
+            on_press: root.open_exam()
+
 
 
         Button:
+
             text: "Logout"
+
             size_hint_y: 0.2
+
             on_press: app.stop()
+
+
+
+
+
+
+
+<ExamScreen>:
+
+
+    BoxLayout:
+
+        orientation: "vertical"
+
+        padding: 20
+
+        spacing: 15
+
+
+
+        Label:
+
+            id: question
+
+            text: "Question"
+
+            font_size: 22
+
+            size_hint_y: 0.3
+
+
+
+        Button:
+
+            id: a
+
+            text: "A"
+
+            on_press: root.answer(self.text)
+
+
+
+        Button:
+
+            id: b
+
+            text: "B"
+
+            on_press: root.answer(self.text)
+
+
+
+        Button:
+
+            id: c
+
+            text: "C"
+
+            on_press: root.answer(self.text)
+
+
+
+        Button:
+
+            id: d
+
+            text: "D"
+
+            on_press: root.answer(self.text)
+
+
+
+        Button:
+
+            text: "Submit Exam"
+
+            on_press: root.submit()
+
+
+
+        Label:
+
+            id: result
+
+            text: ""
