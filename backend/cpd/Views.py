@@ -1,21 +1,115 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .models import CPDPlan
+from accounts.permissions import (
+    IsAdmin,
+    IsTeacher
+)
 
+from .models import (
+    CPDPlan,
+    CPDActivity
+)
+
+from .serializers import (
+    CPDPlanSerializer,
+    CPDActivitySerializer
+)
+
+
+
+# =========================
+# CPD PLAN
+# =========================
 
 class CPDListView(APIView):
 
+    permission_classes = [
+        IsAdmin
+    ]
+
+
     def get(self, request):
-        data = CPDPlan.objects.all()
 
-        result = []
+        plans = CPDPlan.objects.all()
 
-        for item in data:
-            result.append({
-                "title": item.title,
-                "description": item.description,
-                "month": item.month
-            })
+        serializer = CPDPlanSerializer(
+            plans,
+            many=True
+        )
 
-        return Response(result)
+        return Response(
+            serializer.data
+        )
+
+
+    def post(self, request):
+
+        serializer = CPDPlanSerializer(
+            data=request.data
+        )
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            return Response(
+                serializer.data,
+                status=201
+            )
+
+        return Response(
+            serializer.errors,
+            status=400
+        )
+
+
+
+# =========================
+# CPD ACTIVITY
+# =========================
+
+class CPDActivityView(APIView):
+
+    permission_classes = [
+        IsTeacher
+    ]
+
+
+    def get(self, request):
+
+        activities = CPDActivity.objects.filter(
+            teacher=request.user
+        )
+
+        serializer = CPDActivitySerializer(
+            activities,
+            many=True
+        )
+
+        return Response(
+            serializer.data
+        )
+
+
+    def post(self, request):
+
+        serializer = CPDActivitySerializer(
+            data=request.data
+        )
+
+        if serializer.is_valid():
+
+            serializer.save(
+                teacher=request.user
+            )
+
+            return Response(
+                serializer.data,
+                status=201
+            )
+
+        return Response(
+            serializer.errors,
+            status=400
+        )
