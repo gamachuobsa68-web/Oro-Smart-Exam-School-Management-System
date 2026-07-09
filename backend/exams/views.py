@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
 
 from .models import (
@@ -45,12 +46,10 @@ class TeacherExamView(APIView):
             teacher=request.user
         )
 
-
         serializer = ExamSerializer(
             exams,
             many=True
         )
-
 
         return Response(
             serializer.data
@@ -70,7 +69,6 @@ class TeacherExamView(APIView):
             serializer.save(
                 teacher=request.user
             )
-
 
             return Response(
                 serializer.data,
@@ -120,7 +118,7 @@ class StudentExamView(APIView):
 
 
 # =========================
-# START EXAM TIMER
+# START EXAM
 # =========================
 
 class StartExamView(APIView):
@@ -137,14 +135,17 @@ class StartExamView(APIView):
         )
 
 
-        exam = Exam.objects.get(
-            id=exam_id
+        exam = get_object_or_404(
+            Exam,
+            id=exam_id,
+            is_published=True
         )
 
 
         already_started = ExamAttempt.objects.filter(
             student=request.user,
-            exam=exam
+            exam=exam,
+            submitted=False
         ).exists()
 
 
@@ -187,7 +188,7 @@ class StartExamView(APIView):
 
 
 # =========================
-# SAVE ANSWER BUTTON
+# SAVE ANSWER
 # =========================
 
 class SaveAnswerView(APIView):
@@ -214,12 +215,15 @@ class SaveAnswerView(APIView):
         )
 
 
-        question = Question.objects.get(
-            id=question_id
+        question = get_object_or_404(
+            Question,
+            id=question_id,
+            exam_id=exam_id
         )
 
 
-        exam = Exam.objects.get(
+        exam = get_object_or_404(
+            Exam,
             id=exam_id
         )
 
@@ -272,7 +276,8 @@ class SubmitExamView(APIView):
         )
 
 
-        exam = Exam.objects.get(
+        exam = get_object_or_404(
+            Exam,
             id=exam_id
         )
 
@@ -289,12 +294,10 @@ class SubmitExamView(APIView):
         total = 0
 
 
-
         for item in answers:
 
 
             if item.answer == item.question.correct_answer:
-
 
                 item.is_correct = True
 
@@ -312,27 +315,35 @@ class SubmitExamView(APIView):
                 item.mark_obtained = 0
 
 
-
             item.save()
 
 
 
-        percentage = (
-            total /
-            exam.total_mark
-        ) * 100
+        percentage = 0
+
+        if exam.total_mark > 0:
+
+            percentage = (
+                total /
+                exam.total_mark
+            ) * 100
 
 
 
-        result = ExamResult.objects.create(
+
+        result, created = ExamResult.objects.update_or_create(
 
             student=request.user,
 
             exam=exam,
 
-            total_mark=total,
+            defaults={
 
-            percentage=percentage
+                "total_mark": total,
+
+                "percentage": percentage
+
+            }
 
         )
 
@@ -362,4 +373,4 @@ class SubmitExamView(APIView):
 
             ExamResultSerializer(result).data
 
-                )
+        )
