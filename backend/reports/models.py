@@ -8,25 +8,49 @@ from school.models import AcademicYear
 
 class SchoolProfile(models.Model):
 
+
     name = models.CharField(
+
         max_length=200
+
     )
+
 
     logo = models.ImageField(
+
         upload_to="school_logo/",
+
         blank=True,
+
         null=True
+
     )
 
+
     address = models.CharField(
+
         max_length=300,
+
         blank=True
+
     )
 
 
     phone = models.CharField(
+
         max_length=50,
+
         blank=True
+
+    )
+
+
+    email = models.EmailField(
+
+        blank=True,
+
+        null=True
+
     )
 
 
@@ -38,94 +62,165 @@ class SchoolProfile(models.Model):
 
 
 
+
 class ReportCard(models.Model):
 
+
     student = models.ForeignKey(
+
         User,
-        on_delete=models.CASCADE
+
+        on_delete=models.CASCADE,
+
+        related_name="report_cards"
+
     )
 
 
     academic_year = models.ForeignKey(
+
         AcademicYear,
+
         on_delete=models.CASCADE
+
     )
 
 
     total_mark = models.FloatField(
+
         default=0
+
     )
 
 
     average = models.FloatField(
+
         default=0
+
     )
 
 
     rank = models.IntegerField(
+
         default=0
+
     )
 
 
     grade = models.CharField(
+
         max_length=5,
+
         blank=True
+
     )
 
 
     status = models.CharField(
+
         max_length=20,
+
         default="FAIL"
+
     )
 
 
     teacher_comment = models.TextField(
+
         blank=True
+
     )
 
 
     principal_comment = models.TextField(
+
         blank=True
+
     )
 
 
     created_at = models.DateTimeField(
+
         auto_now_add=True
+
     )
 
 
+    updated_at = models.DateTimeField(
 
-    def save(self,*args,**kwargs):
+        auto_now=True
+
+    )
+
+
+    class Meta:
+
+        unique_together = (
+
+            "student",
+
+            "academic_year"
+
+        )
+
+
+
+    def save(self, *args, **kwargs):
+
 
         if self.average >= 80:
-            self.grade="A"
 
-        elif self.average >=70:
-            self.grade="B"
+            self.grade = "A"
 
-        elif self.average >=60:
-            self.grade="C"
 
-        elif self.average >=50:
-            self.grade="D"
+        elif self.average >= 70:
+
+            self.grade = "B"
+
+
+        elif self.average >= 60:
+
+            self.grade = "C"
+
+
+        elif self.average >= 50:
+
+            self.grade = "D"
+
 
         else:
-            self.grade="F"
+
+            self.grade = "F"
 
 
 
-        if self.average >=50:
-            self.status="PASS"
+        if self.average >= 50:
+
+            self.status = "PASS"
+
 
         else:
-            self.status="FAIL"
+
+            self.status = "FAIL"
 
 
 
-        super().save(*args,**kwargs)
+        super().save(*args, **kwargs)
 
 
 
     def __str__(self):
 
-        return self.student.username
+        return (
+
+            self.student.username
+
+            +
+
+            " - "
+
+            +
+
+            self.academic_year.name
+
+        )
