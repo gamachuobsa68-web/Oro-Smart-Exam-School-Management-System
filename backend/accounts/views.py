@@ -3,7 +3,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 
-from .serializers import UserSerializer
+from .models import User
+
+from .serializers import (
+    UserSerializer,
+    RegisterSerializer
+)
+
 
 from .permissions import (
     IsAdmin,
@@ -13,8 +19,54 @@ from .permissions import (
 
 
 
-# User Profile
+
+
+# =========================
+# USER REGISTER
+# =========================
+
+class RegisterView(APIView):
+
+
+    def post(self, request):
+
+        serializer = RegisterSerializer(
+            data=request.data
+        )
+
+
+        if serializer.is_valid():
+
+            user = serializer.save()
+
+
+            return Response(
+
+                UserSerializer(user).data,
+
+                status=201
+
+            )
+
+
+        return Response(
+
+            serializer.errors,
+
+            status=400
+
+        )
+
+
+
+
+
+# =========================
+# USER PROFILE
+# =========================
+
 class ProfileView(APIView):
+
 
     permission_classes = [
         IsAuthenticated
@@ -23,123 +75,185 @@ class ProfileView(APIView):
 
     def get(self, request):
 
-        user = request.user
-
         return Response(
-            UserSerializer(user).data
+
+            UserSerializer(
+                request.user
+            ).data
+
         )
 
 
 
+
+    def put(self, request):
+
+        serializer = UserSerializer(
+
+            request.user,
+
+            data=request.data,
+
+            partial=True
+
+        )
+
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+
+            return Response(
+
+                serializer.data
+
+            )
+
+
+        return Response(
+
+            serializer.errors,
+
+            status=400
+
+        )
+
+
+
+
+
+# =========================
 # ADMIN DASHBOARD
+# =========================
+
 class AdminDashboardView(APIView):
 
+
     permission_classes = [
+
         IsAdmin
+
     ]
 
 
     def get(self, request):
 
-        return Response(
-            {
-                "role": "ADMIN",
+        return Response({
 
-                "message":
-                "Welcome to Admin Dashboard",
+            "role": "ADMIN",
 
-                "permissions": [
+            "message":
+            "Welcome to Admin Dashboard",
 
-                    "Manage Users",
+            "permissions": [
 
-                    "Manage Teachers",
+                "Manage Users",
 
-                    "Manage Students",
+                "Manage Teachers",
 
-                    "Control Server",
+                "Manage Students",
 
-                    "View Reports",
+                "Manage Exams",
 
-                    "System Settings"
+                "View Reports",
 
-                ]
-            }
-        )
+                "System Settings"
+
+            ]
+
+        })
 
 
 
+
+
+# =========================
 # TEACHER DASHBOARD
+# =========================
+
 class TeacherDashboardView(APIView):
 
+
     permission_classes = [
+
         IsTeacher
+
     ]
 
 
     def get(self, request):
 
-        return Response(
-            {
-                "role": "TEACHER",
+        return Response({
 
-                "message":
-                "Welcome to Teacher Dashboard",
+            "role": "TEACHER",
 
-                "permissions": [
+            "message":
+            "Welcome to Teacher Dashboard",
 
-                    "Prepare Exam",
+            "permissions": [
 
-                    "Create Question",
+                "Create Exam",
 
-                    "Upload Answer Key",
+                "Create Questions",
 
-                    "Mark Students",
+                "Publish Exam",
 
-                    "Generate Report Card",
+                "Mark Students",
 
-                    "Lesson Plan",
+                "View Results",
 
-                    "Teacher Assistant",
+                "Lesson Plan",
 
-                    "CPD Management"
+                "CPD Management"
 
-                ]
-            }
-        )
+            ]
+
+        })
 
 
 
+
+
+# =========================
 # STUDENT DASHBOARD
+# =========================
+
 class StudentDashboardView(APIView):
 
+
     permission_classes = [
+
         IsStudent
+
     ]
 
 
     def get(self, request):
 
-        return Response(
-            {
-                "role": "STUDENT",
+        return Response({
 
-                "message":
-                "Welcome to Student Dashboard",
+            "role": "STUDENT",
 
-                "permissions": [
+            "message":
+            "Welcome to Student Dashboard",
 
-                    "View Profile",
+            "permissions": [
 
-                    "Take Exam",
+                "View Profile",
 
-                    "Save Answer",
+                "View Exams",
 
-                    "Submit Exam",
+                "Take Exam",
 
-                    "View Result",
+                "Save Answer",
 
-                    "Download Report Card"
+                "Submit Exam",
 
-                ]
-            }
-        )
+                "View Result",
+
+                "Download Certificate"
+
+            ]
+
+        })
