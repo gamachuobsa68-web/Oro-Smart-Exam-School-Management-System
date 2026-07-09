@@ -9,59 +9,53 @@ from screens import (
 
 
 
-class OroExamManager(ScreenManager):
+class GoExamManager(ScreenManager):
 
     def __init__(self, **kwargs):
 
         super().__init__(**kwargs)
 
         self.exam_id = None
-
         self.exam_data = None
-
         self.questions = []
-
         self.question_index = 0
 
 
 
 
-
-class OroSmartExam(App):
+class GoExamApp(App):
 
 
     def build(self):
 
-        sm = OroExamManager()
+        manager = GoExamManager()
 
 
-        sm.add_widget(
+        manager.add_widget(
             LoginScreen(
                 name="login"
             )
         )
 
 
-        sm.add_widget(
+        manager.add_widget(
             HomeScreen(
                 name="home"
             )
         )
 
 
-        sm.add_widget(
+        manager.add_widget(
             ExamScreen(
                 name="exam"
             )
         )
 
 
-        return sm
-
-
+        return manager
 
 
 
 if __name__ == "__main__":
 
-    OroSmartExam().run()
+    GoExamApp().run()
