@@ -6,6 +6,11 @@ from django.urls import (
 )
 
 
+from django.conf import settings
+
+from django.conf.urls.static import static
+
+
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
@@ -13,88 +18,231 @@ from rest_framework_simplejwt.views import (
 
 
 
+
+
 urlpatterns = [
 
 
-    # Django Admin Panel
+    # =========================
+    # DJANGO ADMIN
+    # =========================
+
     path(
+
         "admin/",
+
         admin.site.urls
+
     ),
 
 
 
-    # JWT Login
+
+
+    # =========================
+    # JWT AUTHENTICATION
+    # =========================
+
     path(
+
         "api/token/",
+
         TokenObtainPairView.as_view(),
+
         name="token"
+
     ),
 
 
 
-    # JWT Refresh
     path(
+
         "api/token/refresh/",
+
         TokenRefreshView.as_view(),
+
         name="token-refresh"
+
     ),
 
 
 
-    # User Account System
+
+
+    # =========================
+    # ACCOUNTS
+    # =========================
+
     path(
+
         "api/accounts/",
+
         include(
             "accounts.urls"
         )
+
     ),
 
 
 
-    # Exam System
+
+
+    # =========================
+    # TEACHERS
+    # =========================
+
     path(
-        "api/exams/",
+
+        "api/teachers/",
+
         include(
-            "exams.urls"
+            "teachers.urls"
         )
+
     ),
 
 
 
-    # Report Card System
+
+
+    # =========================
+    # STUDENTS
+    # =========================
+
     path(
-        "api/reports/",
-        include(
-            "reports.urls"
-        )
-    ),
 
-
-
-    # Student Registration + Roster
-    path(
         "api/students/",
+
         include(
             "students.urls"
         )
+
     ),
 
 
 
-    # Teacher Assistant + Lesson Plan + CPD
+
+
+    # =========================
+    # EXAMS
+    # =========================
+
     path(
+
+        "api/exams/",
+
+        include(
+            "exams.urls"
+        )
+
+    ),
+
+
+
+
+
+    # =========================
+    # REPORTS
+    # =========================
+
+    path(
+
+        "api/reports/",
+
+        include(
+            "reports.urls"
+        )
+
+    ),
+
+
+
+
+
+    # =========================
+    # SCHOOL MANAGEMENT
+    # =========================
+
+    path(
+
+        "api/school/",
+
+        include(
+            "school.urls"
+        )
+
+    ),
+
+
+
+
+
+    # =========================
+    # PROFESSIONAL
+    # =========================
+
+    path(
+
         "api/professional/",
+
         include(
             "professional.urls"
         )
-    ),
-    path(
-    "api/dashboard/",
-    include(
-        "dashboard.urls"
-    )
-),
 
+    ),
+
+
+
+
+
+    # =========================
+    # DASHBOARD
+    # =========================
+
+    path(
+
+        "api/dashboard/",
+
+        include(
+            "dashboard.urls"
+        )
+
+    ),
+
+
+
+
+
+    # =========================
+    # CPD
+    # =========================
+
+    path(
+
+        "api/cpd/",
+
+        include(
+            "cpd.urls"
+        )
+
+    ),
 
 ]
+
+
+
+
+
+# =========================
+# MEDIA FILES
+# =========================
+
+if settings.DEBUG:
+
+    urlpatterns += static(
+
+        settings.MEDIA_URL,
+
+        document_root=settings.MEDIA_ROOT
+
+    )
