@@ -26,7 +26,9 @@ class CPDListView(APIView):
 
                 "description": plan.description,
 
-                "month": plan.month
+                "month": plan.month,
+
+                "created_at": plan.created_at
 
             })
 
@@ -49,6 +51,8 @@ class CPDActivityView(APIView):
         for activity in activities:
 
             data.append({
+
+                "id": activity.id,
 
                 "plan": activity.plan.title,
 
