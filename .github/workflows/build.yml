@@ -5,56 +5,53 @@ on:
     branches:
       - main
 
-
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
-
     steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
 
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
 
+      - name: Cache Buildozer
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.buildozer
+            ~/.gradle
+          key: buildozer-${{ runner.os }}
 
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.10"
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git \
+            zip \
+            unzip \
+            openjdk-17-jdk \
+            build-essential \
+            libffi-dev \
+            libssl-dev \
+            python3-dev
 
+      - name: Install Python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install Cython==0.29.37
+          pip install buildozer
 
-    - name: Install Build Tools
-      run: |
+      - name: Build APK
+        working-directory: mobile
+        run: |
+          buildozer android debug
 
-        sudo apt update
-
-        sudo apt install -y \
-        build-essential \
-        git \
-        zip \
-        unzip \
-        openjdk-17-jdk
-
-
-    - name: Install Buildozer
-      run: |
-
-        pip install buildozer
-
-
-    - name: Build APK
-      working-directory: mobile
-      run: |
-
-        buildozer android debug
-
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-
-        name: Go-Exam-apk
-
-        path: mobile/bin/*.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Go-Exam-APK
+          path: mobile/bin/*.apk
