@@ -1,26 +1,28 @@
 from kivy.app import App
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.lang import Builder
+from kivy.uix.screenmanager import ScreenManager
+
+from screens import LoginScreen, HomeScreen
 
 
-class LoginScreen(Screen):
-    def login(self):
-        self.manager.current = "home"
-
-
-class HomeScreen(Screen):
+class OroExamManager(ScreenManager):
     pass
 
 
-class ExamApp(App):
-    def build(self):
-        Builder.load_file("ui.kv")
+class OroSmartExam(App):
 
-        sm = ScreenManager()
-        sm.add_widget(LoginScreen(name="login"))
-        sm.add_widget(HomeScreen(name="home"))
+    def build(self):
+        sm = OroExamManager()
+
+        sm.add_widget(
+            LoginScreen(name="login")
+        )
+
+        sm.add_widget(
+            HomeScreen(name="home")
+        )
+
         return sm
 
 
 if __name__ == "__main__":
-    ExamApp().run()
+    OroSmartExam().run()
