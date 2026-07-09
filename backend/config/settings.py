@@ -13,32 +13,62 @@ ALLOWED_HOSTS = ["*"]
 
 
 
+
+
 INSTALLED_APPS = [
 
+    # Django apps
+
     "django.contrib.admin",
+
     "django.contrib.auth",
+
     "django.contrib.contenttypes",
+
     "django.contrib.sessions",
+
     "django.contrib.messages",
+
     "django.contrib.staticfiles",
 
 
+
+    # Third party apps
+
     "rest_framework",
+
     "corsheaders",
 
 
+
+    # Project apps
+
     "accounts",
+
     "students",
+
     "teachers",
+
     "exams",
+
     "reports",
+
     "school",
+
     "professional",
+
     "dashboard",
+
     "cpd",
-    "attendance"
-    "assistant"
+
+    "attendance",
+
+    "assistant",
+
 ]
+
+
+
 
 
 MIDDLEWARE = [
@@ -58,23 +88,36 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
 
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
 ]
+
+
+
 
 
 ROOT_URLCONF = "config.urls"
 
 
 
+
+
 TEMPLATES = [
+
     {
+
         "BACKEND":
+
         "django.template.backends.django.DjangoTemplates",
+
 
         "DIRS": [],
 
+
         "APP_DIRS": True,
 
+
         "OPTIONS": {
+
             "context_processors": [
 
                 "django.template.context_processors.request",
@@ -82,15 +125,25 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
 
                 "django.contrib.messages.context_processors.messages",
+
             ],
+
         },
+
     },
+
 ]
+
+
+
 
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+
 ASGI_APPLICATION = "config.asgi.application"
+
+
 
 
 
@@ -103,7 +156,10 @@ DATABASES = {
         "NAME": BASE_DIR / "database.sqlite3",
 
     }
+
 }
+
+
 
 
 
@@ -111,23 +167,35 @@ AUTH_PASSWORD_VALIDATORS = []
 
 
 
+
+
 LANGUAGE_CODE = "en-us"
+
 
 TIME_ZONE = "Africa/Addis_Ababa"
 
 
 USE_I18N = True
 
+
 USE_TZ = True
+
+
 
 
 
 STATIC_URL = "static/"
 
 
+
+
+
 MEDIA_URL = "/media/"
 
+
 MEDIA_ROOT = BASE_DIR / "media"
+
+
 
 
 
@@ -135,7 +203,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 
+
+
 AUTH_USER_MODEL = "accounts.User"
+
+
 
 
 
@@ -148,6 +220,8 @@ REST_FRAMEWORK = {
     )
 
 }
+
+
 
 
 
