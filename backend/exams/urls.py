@@ -9,26 +9,36 @@ from .views import (
 )
 
 
-
 urlpatterns = [
 
-    # Teacher create and view exams
+    # =========================
+    # TEACHER EXAMS
+    # Create and View Teacher Exams
+    # =========================
+
     path(
-        "teacher/",
+        "teacher/exams/",
         TeacherExamView.as_view(),
         name="teacher-exams"
     ),
 
 
-    # Student view published exams
+    # =========================
+    # STUDENT EXAMS
+    # View Published Exams
+    # =========================
+
     path(
-        "student/",
+        "student/exams/",
         StudentExamView.as_view(),
         name="student-exams"
     ),
 
 
-    # Student start exam
+    # =========================
+    # START EXAM
+    # =========================
+
     path(
         "start/",
         StartExamView.as_view(),
@@ -36,15 +46,21 @@ urlpatterns = [
     ),
 
 
-    # Save answer button
+    # =========================
+    # SAVE ANSWER
+    # =========================
+
     path(
-        "save-answer/",
+        "answers/save/",
         SaveAnswerView.as_view(),
         name="save-answer"
     ),
 
 
-    # Submit exam
+    # =========================
+    # SUBMIT EXAM
+    # =========================
+
     path(
         "submit/",
         SubmitExamView.as_view(),
