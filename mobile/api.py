@@ -1,172 +1,102 @@
 import requests
 
 
-# Yeroo server irratti fe'amu kana jijjiirra
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "http://192.168.1.5:8000"
 
 
-access_token = None
+token = None
 
 
-
-# =========================
-# LOGIN JWT TOKEN
-# =========================
 
 def login(username, password):
 
-    global access_token
+    global token
 
 
-    url = BASE_URL + "/api/token/"
+    response = requests.post(
+
+        BASE_URL + "/api/token/",
+
+        json={
+            "username": username,
+            "password": password
+        }
+
+    )
 
 
-    data = {
-        "username": username,
-        "password": password
-    }
+    if response.status_code == 200:
+
+        token = response.json()["access"]
+
+        return True
 
 
-    try:
-
-        response = requests.post(
-            url,
-            json=data
-        )
-
-
-        if response.status_code == 200:
-
-            access_token = (
-                response.json()
-                .get("access")
-            )
-
-            return True
-
-
-        return False
-
-
-    except Exception:
-
-        return False
+    return False
 
 
 
 
-
-# =========================
-# AUTH HEADER
-# =========================
-
-def headers():
+def auth_header():
 
     return {
-
         "Authorization":
-        "Bearer " + access_token
-
+        f"Bearer {token}"
     }
 
 
 
 
-
-# =========================
-# GET STUDENT EXAMS
-# =========================
 
 def get_student_exams():
 
+    response = requests.get(
 
-    url = (
-        BASE_URL
-        +
-        "/api/exams/student/exams/"
+        BASE_URL +
+        "/api/exams/student/exams/",
+
+        headers=auth_header()
+
     )
 
 
-    try:
+    if response.status_code == 200:
 
-        response = requests.get(
-
-            url,
-
-            headers=headers()
-
-        )
+        return response.json()
 
 
-        if response.status_code == 200:
-
-            return response.json()
-
-
-        return []
-
-
-    except Exception:
-
-        return []
+    return []
 
 
 
 
-
-# =========================
-# START EXAM
-# =========================
 
 def start_exam(exam_id):
 
+    response = requests.post(
 
-    url = (
-        BASE_URL
-        +
-        "/api/exams/start/"
+        BASE_URL +
+        "/api/exams/start/",
+
+        json={
+            "exam_id": exam_id
+        },
+
+        headers=auth_header()
+
     )
 
 
-    data = {
+    if response.status_code == 200:
 
-        "exam_id": exam_id
-
-    }
+        return response.json()
 
 
-    try:
-
-        response = requests.post(
-
-            url,
-
-            json=data,
-
-            headers=headers()
-
-        )
-
-
-        if response.status_code == 200:
-
-            return response.json()
-
-
-        return None
-
-
-    except Exception:
-
-        return None
+    return None
 
 
 
 
-
-# =========================
-# SAVE ANSWER
-# =========================
 
 def save_answer(
         exam_id,
@@ -175,96 +105,47 @@ def save_answer(
 ):
 
 
-    url = (
-        BASE_URL
-        +
-        "/api/exams/answers/save/"
+    response = requests.post(
+
+        BASE_URL +
+        "/api/exams/answers/save/",
+
+        json={
+
+            "exam_id": exam_id,
+
+            "question_id": question_id,
+
+            "answer": answer
+
+        },
+
+        headers=auth_header()
+
     )
 
 
-    data = {
-
-        "exam_id": exam_id,
-
-        "question_id": question_id,
-
-        "answer": answer
-
-    }
-
-
-    try:
-
-        response = requests.post(
-
-            url,
-
-            json=data,
-
-            headers=headers()
-
-        )
-
-
-        return response.json()
-
-
-    except Exception:
-
-        return None
+    return response.json()
 
 
 
 
-
-# =========================
-# SUBMIT EXAM
-# =========================
 
 def submit_exam(exam_id):
 
 
-    url = (
-        BASE_URL
-        +
-        "/api/exams/submit/"
+    response = requests.post(
+
+        BASE_URL +
+        "/api/exams/submit/",
+
+        json={
+            "exam_id": exam_id
+        },
+
+        headers=auth_header()
+
     )
 
 
-    data = {
-
-        "exam_id": exam_id
-
-    }
-
-
-    try:
-
-        response = requests.post(
-
-            url,
-
-            json=data,
-
-            headers=headers()
-
-        )
-
-
-        if response.status_code == 200:
-
-            return response.json()
-
-
-        return {
-            "error":
-            "Submit failed"
-        }
-
-
-    except Exception:
-
-        return {
-            "error":
-            "Connection failed"
-    }
+    return response.json()
