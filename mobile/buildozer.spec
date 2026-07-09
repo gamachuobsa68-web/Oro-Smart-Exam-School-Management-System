@@ -1,29 +1,33 @@
 [app]
 
-title = Oro Smart Exam
+title = Go-Exam
 
-package.name = orosmartexam
+package.name = goexam
 
-package.domain = org.school
+package.domain = org.goexam
 
 source.dir = .
 
 source.include_exts = py,kv,png,jpg,json
 
-version = 1.0
+version = 1.0.0
 
 
-requirements = python3,kivy==2.2.1,requests
+requirements = python3,kivy,requests
+
 
 orientation = portrait
 
 fullscreen = 0
 
 
-[android]
-
-android.api = 33
-
-android.minapi = 21
-
 android.permissions = INTERNET
+
+
+android.api = 35
+
+android.minapi = 23
+
+
+# APK maqaa
+android.entrypoint = org.kivy.android.PythonActivity
