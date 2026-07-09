@@ -7,6 +7,7 @@ from .models import StudentProfile
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
 
+
     list_display = (
 
         "student_id",
@@ -17,7 +18,22 @@ class StudentProfileAdmin(admin.ModelAdmin):
 
         "parent_name",
 
-        "parent_phone"
+        "parent_phone",
+
+        "is_active",
+
+        "created_at"
+
+    )
+
+
+    list_filter = (
+
+        "classroom",
+
+        "is_active",
+
+        "created_at"
 
     )
 
@@ -26,6 +42,28 @@ class StudentProfileAdmin(admin.ModelAdmin):
 
         "student_id",
 
-        "user__username"
+        "user__username",
+
+        "user__first_name",
+
+        "user__last_name",
+
+        "parent_name"
+
+    )
+
+
+    readonly_fields = (
+
+        "created_at",
+
+        "updated_at"
+
+    )
+
+
+    ordering = (
+
+        "student_id",
 
     )
