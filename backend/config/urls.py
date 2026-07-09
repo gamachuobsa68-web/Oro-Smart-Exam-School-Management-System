@@ -244,7 +244,13 @@ urlpatterns = [
         )
 
     ),
-
+    
+path(
+    "api/attendance/",
+    include(
+        "attendance.urls"
+    )
+),
 ]
 
 
