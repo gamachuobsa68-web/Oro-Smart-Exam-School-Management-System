@@ -1,5 +1,4 @@
 from rest_framework.views import APIView
-
 from rest_framework.response import Response
 
 
@@ -47,30 +46,44 @@ from accounts.permissions import (
 
 class TeacherAssistantView(APIView):
 
+
     permission_classes = [
+
         IsAdmin
+
     ]
+
 
 
     def get(self, request):
 
-        data = TeacherAssistant.objects.all()
+        assistants = TeacherAssistant.objects.all()
+
 
         serializer = TeacherAssistantSerializer(
-            data,
+
+            assistants,
+
             many=True
+
         )
 
+
         return Response(
+
             serializer.data
+
         )
+
 
 
 
     def post(self, request):
 
         serializer = TeacherAssistantSerializer(
+
             data=request.data
+
         )
 
 
@@ -78,16 +91,26 @@ class TeacherAssistantView(APIView):
 
             serializer.save()
 
+
             return Response(
+
                 serializer.data,
+
                 status=201
+
             )
 
 
         return Response(
+
             serializer.errors,
+
             status=400
+
         )
+
+
+
 
 
 
@@ -99,54 +122,79 @@ class TeacherAssistantView(APIView):
 
 class LessonPlanView(APIView):
 
+
     permission_classes = [
+
         IsTeacher
+
     ]
+
 
 
     def get(self, request):
 
         plans = LessonPlan.objects.filter(
+
             teacher=request.user
+
         )
 
 
         serializer = LessonPlanSerializer(
+
             plans,
+
             many=True
+
         )
 
 
         return Response(
+
             serializer.data
+
         )
+
 
 
 
     def post(self, request):
 
         serializer = LessonPlanSerializer(
+
             data=request.data
+
         )
 
 
         if serializer.is_valid():
 
             serializer.save(
+
                 teacher=request.user
+
             )
 
 
             return Response(
+
                 serializer.data,
+
                 status=201
+
             )
 
 
         return Response(
+
             serializer.errors,
+
             status=400
+
         )
+
+
+
 
 
 
@@ -158,54 +206,79 @@ class LessonPlanView(APIView):
 
 class CPDView(APIView):
 
+
     permission_classes = [
+
         IsTeacher
+
     ]
+
 
 
     def get(self, request):
 
         cpd = CPD.objects.filter(
+
             teacher=request.user
+
         )
 
 
         serializer = CPDSerializer(
+
             cpd,
+
             many=True
+
         )
 
 
         return Response(
+
             serializer.data
+
         )
+
 
 
 
     def post(self, request):
 
         serializer = CPDSerializer(
+
             data=request.data
+
         )
 
 
         if serializer.is_valid():
 
             serializer.save(
+
                 teacher=request.user
+
             )
 
 
             return Response(
+
                 serializer.data,
+
                 status=201
+
             )
 
 
         return Response(
+
             serializer.errors,
+
             status=400
+
         )
+
+
+
 
 
 
@@ -217,9 +290,13 @@ class CPDView(APIView):
 
 class CPDReportView(APIView):
 
+
     permission_classes = [
+
         IsAdmin
+
     ]
+
 
 
     def get(self, request):
@@ -228,11 +305,50 @@ class CPDReportView(APIView):
 
 
         serializer = CPDReportSerializer(
+
             reports,
+
             many=True
+
         )
 
 
         return Response(
+
             serializer.data
-          )
+
+        )
+
+
+
+
+    def post(self, request):
+
+        serializer = CPDReportSerializer(
+
+            data=request.data
+
+        )
+
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+
+            return Response(
+
+                serializer.data,
+
+                status=201
+
+            )
+
+
+        return Response(
+
+            serializer.errors,
+
+            status=400
+
+        )
