@@ -251,6 +251,12 @@ path(
         "attendance.urls"
     )
 ),
+path(
+    "api/assistant/",
+    include(
+        "assistant.urls"
+    )
+),    
 ]
 
 
