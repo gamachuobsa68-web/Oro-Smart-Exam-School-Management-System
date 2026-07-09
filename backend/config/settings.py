@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "professional",
     "dashboard",
     "cpd",
+    "attendance"
 ]
 
 
