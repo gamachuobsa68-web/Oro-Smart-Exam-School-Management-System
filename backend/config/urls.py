@@ -24,7 +24,7 @@ urlpatterns = [
 
 
     # =========================
-    # DJANGO ADMIN
+    # ADMIN PANEL
     # =========================
 
     path(
@@ -40,7 +40,7 @@ urlpatterns = [
 
 
     # =========================
-    # JWT AUTHENTICATION
+    # JWT LOGIN
     # =========================
 
     path(
@@ -78,7 +78,9 @@ urlpatterns = [
         "api/accounts/",
 
         include(
+
             "accounts.urls"
+
         )
 
     ),
@@ -96,7 +98,9 @@ urlpatterns = [
         "api/teachers/",
 
         include(
+
             "teachers.urls"
+
         )
 
     ),
@@ -114,43 +118,9 @@ urlpatterns = [
         "api/students/",
 
         include(
+
             "students.urls"
-        )
 
-    ),
-
-
-
-
-
-    # =========================
-    # EXAMS
-    # =========================
-
-    path(
-
-        "api/exams/",
-
-        include(
-            "exams.urls"
-        )
-
-    ),
-
-
-
-
-
-    # =========================
-    # REPORTS
-    # =========================
-
-    path(
-
-        "api/reports/",
-
-        include(
-            "reports.urls"
         )
 
     ),
@@ -168,7 +138,9 @@ urlpatterns = [
         "api/school/",
 
         include(
+
             "school.urls"
+
         )
 
     ),
@@ -178,7 +150,47 @@ urlpatterns = [
 
 
     # =========================
-    # PROFESSIONAL
+    # EXAM SYSTEM
+    # =========================
+
+    path(
+
+        "api/exams/",
+
+        include(
+
+            "exams.urls"
+
+        )
+
+    ),
+
+
+
+
+
+    # =========================
+    # REPORT CARD
+    # =========================
+
+    path(
+
+        "api/reports/",
+
+        include(
+
+            "reports.urls"
+
+        )
+
+    ),
+
+
+
+
+
+    # =========================
+    # PROFESSIONAL DEVELOPMENT
     # =========================
 
     path(
@@ -186,7 +198,9 @@ urlpatterns = [
         "api/professional/",
 
         include(
+
             "professional.urls"
+
         )
 
     ),
@@ -204,7 +218,9 @@ urlpatterns = [
         "api/dashboard/",
 
         include(
+
             "dashboard.urls"
+
         )
 
     ),
@@ -222,7 +238,9 @@ urlpatterns = [
         "api/cpd/",
 
         include(
+
             "cpd.urls"
+
         )
 
     ),
@@ -245,4 +263,4 @@ if settings.DEBUG:
 
         document_root=settings.MEDIA_ROOT
 
-    )
+)
