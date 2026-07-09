@@ -5,6 +5,8 @@ from .views import (
     CPDActivityView
 )
 
+
+
 urlpatterns = [
 
     path(
@@ -12,6 +14,7 @@ urlpatterns = [
         CPDListView.as_view(),
         name="cpd-plans"
     ),
+
 
     path(
         "activities/",
