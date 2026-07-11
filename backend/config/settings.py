@@ -12,63 +12,39 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 
-
-
-
 INSTALLED_APPS = [
 
     # Django apps
 
     "django.contrib.admin",
-
     "django.contrib.auth",
-
     "django.contrib.contenttypes",
-
     "django.contrib.sessions",
-
     "django.contrib.messages",
-
     "django.contrib.staticfiles",
-
 
 
     # Third party apps
 
     "rest_framework",
-
     "corsheaders",
-
 
 
     # Project apps
 
     "accounts",
-
     "students",
-
     "teachers",
-
     "exams",
-
     "reports",
-
     "school",
-
     "professional",
-
     "dashboard",
-
     "cpd",
-
     "attendance",
-
     "assistant",
 
 ]
-
-
-
 
 
 MIDDLEWARE = [
@@ -92,12 +68,7 @@ MIDDLEWARE = [
 ]
 
 
-
-
-
 ROOT_URLCONF = "config.urls"
-
-
 
 
 
@@ -106,15 +77,11 @@ TEMPLATES = [
     {
 
         "BACKEND":
-
         "django.template.backends.django.DjangoTemplates",
-
 
         "DIRS": [],
 
-
         "APP_DIRS": True,
-
 
         "OPTIONS": {
 
@@ -136,14 +103,9 @@ TEMPLATES = [
 
 
 
-
-
 WSGI_APPLICATION = "config.wsgi.application"
 
-
 ASGI_APPLICATION = "config.asgi.application"
-
-
 
 
 
@@ -161,11 +123,7 @@ DATABASES = {
 
 
 
-
-
 AUTH_PASSWORD_VALIDATORS = []
-
-
 
 
 
@@ -177,10 +135,7 @@ TIME_ZONE = "Africa/Addis_Ababa"
 
 USE_I18N = True
 
-
 USE_TZ = True
-
-
 
 
 
@@ -188,14 +143,9 @@ STATIC_URL = "static/"
 
 
 
-
-
 MEDIA_URL = "/media/"
 
-
 MEDIA_ROOT = BASE_DIR / "media"
-
-
 
 
 
@@ -203,11 +153,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 
-
-
 AUTH_USER_MODEL = "accounts.User"
-
-
 
 
 
@@ -223,6 +169,21 @@ REST_FRAMEWORK = {
 
 
 
-
-
 CORS_ALLOW_ALL_ORIGINS = True
+
+
+
+# =========================
+# GITHUB CODESPACE CSRF
+# =========================
+
+CSRF_TRUSTED_ORIGINS = [
+
+    "https://glorious-goggles-qvv9vj9qqj9g3xq5w-8000.app.github.dev",
+
+]
+
+
+CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SECURE = True
