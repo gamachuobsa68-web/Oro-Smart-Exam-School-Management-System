@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -15,7 +14,6 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
 
     # Django apps
-
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -23,15 +21,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-
     # Third party apps
-
     "rest_framework",
     "corsheaders",
 
-
     # Project apps
-
     "accounts",
     "students",
     "teachers",
@@ -43,7 +37,6 @@ INSTALLED_APPS = [
     "cpd",
     "attendance",
     "assistant",
-
 ]
 
 
@@ -71,20 +64,16 @@ MIDDLEWARE = [
 ROOT_URLCONF = "config.urls"
 
 
-
 TEMPLATES = [
 
     {
-
-        "BACKEND":
-        "django.template.backends.django.DjangoTemplates",
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
 
         "DIRS": [],
 
         "APP_DIRS": True,
 
         "OPTIONS": {
-
             "context_processors": [
 
                 "django.template.context_processors.request",
@@ -94,13 +83,9 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
 
             ],
-
         },
-
     },
-
 ]
-
 
 
 WSGI_APPLICATION = "config.wsgi.application"
@@ -126,7 +111,6 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = []
 
 
-
 LANGUAGE_CODE = "en-us"
 
 
@@ -140,7 +124,6 @@ USE_TZ = True
 
 
 STATIC_URL = "static/"
-
 
 
 MEDIA_URL = "/media/"
@@ -184,6 +167,6 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 
-CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = False
 
-SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = False
