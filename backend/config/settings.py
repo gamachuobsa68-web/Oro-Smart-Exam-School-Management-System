@@ -160,10 +160,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 # GITHUB CODESPACE CSRF
 # =========================
 
+
 CSRF_TRUSTED_ORIGINS = [
     "https://glorious-goggles-qvv9vj9qqj9g3xq5w-8000.app.github.dev",
-    "https://*.github.dev",
 ]
 
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
