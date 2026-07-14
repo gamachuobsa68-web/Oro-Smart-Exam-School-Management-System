@@ -162,8 +162,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://glorious-goggles-qvv9vj9qqj9g3xq5w-8000.app.github.dev",
     "https://localhost:8000",
+    "http://localhost:8000",
+    "https://glorious-goggles-qvv9vj9qqj9g3xq5w-8000.app.github.dev",
 ]
 
 CSRF_COOKIE_SECURE = False
