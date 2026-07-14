@@ -1,4 +1,5 @@
-False pathlib import Path
+from pathlib import Path
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -13,7 +14,6 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
 
-    # Django apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -21,11 +21,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Third party apps
     "rest_framework",
     "corsheaders",
 
-    # Project apps
     "accounts",
     "students",
     "teachers",
@@ -74,6 +72,7 @@ TEMPLATES = [
         "APP_DIRS": True,
 
         "OPTIONS": {
+
             "context_processors": [
 
                 "django.template.context_processors.request",
@@ -83,8 +82,10 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
 
             ],
+
         },
     },
+
 ]
 
 
@@ -157,15 +158,22 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 # =========================
-# GITHUB CODESPACE CSRF
+# CSRF SETTINGS
 # =========================
 
-
 CSRF_TRUSTED_ORIGINS = [
+
     "https://localhost:8000",
+
     "http://localhost:8000",
+
     "https://glorious-goggles-qvv9vj9qqj9g3xq5w-8000.app.github.dev",
+
 ]
 
+
 CSRF_COOKIE_SECURE = False
+
 SESSION_COOKIE_SECURE = False
+
+CSRF_USE_SESSIONS = False
