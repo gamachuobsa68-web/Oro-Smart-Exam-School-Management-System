@@ -165,5 +165,5 @@ CSRF_TRUSTED_ORIGINS = [
     "https://glorious-goggles-qvv9vj9qqj9g3xq5w-8000.app.github.dev",
 ]
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
