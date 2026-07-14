@@ -158,22 +158,15 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 # =========================
-# CSRF SETTINGS
+# GITHUB CODESPACE CSRF FIX
 # =========================
 
 CSRF_TRUSTED_ORIGINS = [
-
-    "https://localhost:8000",
-
-    "http://localhost:8000",
-
     "https://glorious-goggles-qvv9vj9qqj9g3xq5w-8000.app.github.dev",
-
+    "https://*.github.dev",
 ]
 
-
 CSRF_COOKIE_SECURE = False
-
 SESSION_COOKIE_SECURE = False
 
-CSRF_USE_SESSIONS = False
+CORS_ALLOW_ALL_ORIGINS = True
