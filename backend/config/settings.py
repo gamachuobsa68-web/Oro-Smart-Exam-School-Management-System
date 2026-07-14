@@ -1,4 +1,4 @@
-from pathlib import Path
+False pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -169,3 +169,4 @@ CSRF_TRUSTED_ORIGINS = [
 
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
+CSRF_USE_SESSIONS = False
