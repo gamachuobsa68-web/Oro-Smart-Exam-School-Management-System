@@ -139,3 +139,34 @@ class SubjectAdmin(admin.ModelAdmin):
         "code"
 
     )
+@admin.register(Grade)
+class GradeAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "name",
+        "is_active",
+    )
+
+    list_filter = (
+        "is_active",
+    )
+
+    search_fields = (
+        "name",
+    )
+
+
+
+@admin.register(SchoolSetting)
+class SchoolSettingAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "school",
+        "report_title",
+        "principal_name",
+        "teacher_name",
+    )
+
+    search_fields = (
+        "school__name",
+    )
