@@ -1,12 +1,6 @@
 from django.db import models
-
 from accounts.models import User
-
-from school.models import (
-    Subject,
-    ClassRoom
-)
-
+from school.models import Subject, ClassRoom
 
 
 class Exam(models.Model):
@@ -16,30 +10,31 @@ class Exam(models.Model):
         ("PAPER", "Paper"),
     )
 
-
-    title = models.CharField(
-        max_length=200
+    STATUS = (
+        ("DRAFT", "Draft"),
+        ("PUBLISHED", "Published"),
+        ("CLOSED", "Closed"),
     )
 
+    title = models.CharField(max_length=200)
 
     subject = models.ForeignKey(
         Subject,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="exams"
     )
-
 
     classroom = models.ForeignKey(
         ClassRoom,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="exams"
     )
-
 
     teacher = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="exams_created"
+        related_name="created_exams"
     )
-
 
     exam_type = models.CharField(
         max_length=20,
@@ -47,32 +42,41 @@ class Exam(models.Model):
         default="ONLINE"
     )
 
+    duration_minutes = models.PositiveIntegerField(default=60)
 
-    duration_minutes = models.IntegerField(
-        default=60
+    total_mark = models.PositiveIntegerField(default=100)
+
+    pass_mark = models.PositiveIntegerField(default=50)
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS,
+        default="DRAFT"
     )
 
+    is_published = models.BooleanField(default=False)
 
-    total_mark = models.IntegerField(
-        default=100
+    start_time = models.DateTimeField(
+        null=True,
+        blank=True
     )
 
-
-    is_published = models.BooleanField(
-        default=False
+    end_time = models.DateTimeField(
+        null=True,
+        blank=True
     )
-
 
     created_at = models.DateTimeField(
         auto_now_add=True
     )
 
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
 
     def __str__(self):
-
         return self.title
-
-
 
 
 
@@ -80,7 +84,7 @@ class Question(models.Model):
 
     QUESTION_TYPES = (
         ("MCQ", "Multiple Choice"),
-        ("TEXT", "Written Answer"),
+        ("TEXT", "Written"),
     )
 
 
@@ -96,11 +100,12 @@ class Question(models.Model):
 
     question_type = models.CharField(
         max_length=20,
-        choices=QUESTION_TYPES
+        choices=QUESTION_TYPES,
+        default="MCQ"
     )
 
 
-    mark = models.IntegerField(
+    mark = models.PositiveIntegerField(
         default=1
     )
 
@@ -110,18 +115,15 @@ class Question(models.Model):
         blank=True
     )
 
-
     option_b = models.CharField(
         max_length=255,
         blank=True
     )
 
-
     option_c = models.CharField(
         max_length=255,
         blank=True
     )
-
 
     option_d = models.CharField(
         max_length=255,
@@ -130,15 +132,13 @@ class Question(models.Model):
 
 
     correct_answer = models.CharField(
-        max_length=255
+        max_length=255,
+        blank=True
     )
 
 
     def __str__(self):
-
         return self.question_text
-
-
 
 
 
@@ -146,13 +146,15 @@ class ExamAttempt(models.Model):
 
     student = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="exam_attempts"
     )
 
 
     exam = models.ForeignKey(
         Exam,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="attempts"
     )
 
 
@@ -173,28 +175,18 @@ class ExamAttempt(models.Model):
 
 
     def __str__(self):
-
-        return (
-            self.student.username
-            + "-"
-            + self.exam.title
-        )
-
-
+        return self.student.username + " - " + self.exam.title
 
 
 
 class StudentAnswer(models.Model):
 
-    student = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
-
-
-    exam = models.ForeignKey(
-        Exam,
-        on_delete=models.CASCADE
+    attempt = models.ForeignKey(
+        ExamAttempt,
+        on_delete=models.CASCADE,
+        related_name="answers",
+        null=True,
+        blank=True
     )
 
 
@@ -205,7 +197,8 @@ class StudentAnswer(models.Model):
 
 
     answer = models.CharField(
-        max_length=255
+        max_length=255,
+        blank=True
     )
 
 
@@ -214,21 +207,13 @@ class StudentAnswer(models.Model):
     )
 
 
-    mark_obtained = models.IntegerField(
+    mark_obtained = models.PositiveIntegerField(
         default=0
     )
 
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
-
     def __str__(self):
-
-        return self.student.username
-
-
+        return self.attempt.student.username
 
 
 
@@ -236,17 +221,19 @@ class ExamResult(models.Model):
 
     student = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="exam_results"
     )
 
 
     exam = models.ForeignKey(
         Exam,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="results"
     )
 
 
-    total_mark = models.IntegerField(
+    total_mark = models.PositiveIntegerField(
         default=0
     )
 
@@ -268,8 +255,9 @@ class ExamResult(models.Model):
     )
 
 
-    submitted_at = models.DateTimeField(
-        auto_now_add=True
+    rank = models.PositiveIntegerField(
+        null=True,
+        blank=True
     )
 
 
@@ -301,7 +289,5 @@ class ExamResult(models.Model):
         super().save(*args, **kwargs)
 
 
-
     def __str__(self):
-
-        return self.student.username
+        return self.student.username + " - " + self.exam.title
