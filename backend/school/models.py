@@ -205,3 +205,61 @@ class Subject(models.Model):
     def __str__(self):
 
         return self.name
+class Grade(models.Model):
+
+    name = models.CharField(
+        max_length=50,
+        unique=True
+    )
+
+    description = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    is_active = models.BooleanField(
+        default=True
+    )
+
+
+    def __str__(self):
+        return self.name
+
+
+
+class SchoolSetting(models.Model):
+
+    school = models.OneToOneField(
+        School,
+        on_delete=models.CASCADE,
+        related_name="settings"
+    )
+
+    report_title = models.CharField(
+        max_length=200,
+        default="Student Report Card"
+    )
+
+    principal_name = models.CharField(
+        max_length=200,
+        blank=True
+    )
+
+    teacher_name = models.CharField(
+        max_length=200,
+        blank=True
+    )
+
+    footer_text = models.TextField(
+        blank=True
+    )
+
+    signature_image = models.ImageField(
+        upload_to="signatures/",
+        blank=True,
+        null=True
+    )
+
+
+    def __str__(self):
+        return self.school.name
