@@ -2,15 +2,12 @@ from django.contrib import admin
 
 
 from .models import (
-
     School,
-
     AcademicYear,
-
     ClassRoom,
-
-    Subject
-
+    Subject,
+    Grade,
+    SchoolSetting
 )
 
 
