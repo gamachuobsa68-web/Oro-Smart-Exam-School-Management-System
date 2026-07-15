@@ -6,7 +6,7 @@ from .models import StudentProfile
 
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
-
+change_list_template = "admin/students/studentprofile/change_list.html"
 
     list_display = (
 
